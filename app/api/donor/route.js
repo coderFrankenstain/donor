@@ -15,6 +15,7 @@ function randomUrl() {
 }
 
 let donor = [];
+console.log("你好", donor);
 
 //生成
 
@@ -35,7 +36,7 @@ export async function GET(request) {
 }
 
 export async function PUT(request) {
-  const { uuid ,status } = await request.json();
+  const { uuid, status } = await request.json();
   donor = donor.map((value) =>
     value.uuid === uuid ? { ...value, status: status } : value
   );

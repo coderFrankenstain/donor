@@ -7,18 +7,28 @@ import AddressSelectModal from "@/components/AddressSelect";
 
 const ExchangePage = () => {
   const [data, setData] = useState([]);
-  const [score, setScore] = useState(10);
+  const [score, setScore] = useState(0);
 
   const getDigital = async () => {
     const response = await fetch("/api/digital", {
       method: "GET",
     });
-    const data = await response.json();
-    setData(data);
+    const resp = await response.json();
+    setData(resp);
+  };
+
+  const getUser = async () => {
+    const reponse = await fetch("/api/user?name=donor", {
+      method: "GET",
+    });
+    const resp = await reponse.json();
+    console.log("ad ", resp);
+    setScore(resp.score);
   };
 
   useEffect(() => {
     getDigital();
+    getUser();
   }, []);
 
   const columns = [
@@ -57,7 +67,7 @@ const ExchangePage = () => {
       render: (text, record) => (
         <Button
           disabled={record.status === 1}
-          onClick={() => {
+          onClick={async () => {
             //检查用户积分是否足够
             if (score <= 0) {
               message.error("当前用户积分不足");
@@ -74,8 +84,14 @@ const ExchangePage = () => {
                 value.uuid == changeUid ? { ...value, status: 1 } : value
               )
             );
+
+            await fetch("/api/user", {
+              method: "POST",
+              body: JSON.stringify({ name: "donor" }),
+            });
+
             //同时上传后端接口
-            fetch("/api/digital", {
+            await fetch("/api/digital", {
               method: "PUT",
               body: JSON.stringify({ uuid: changeUid }),
             });

@@ -17,6 +17,15 @@ const AddPage = () => {
     setData(data);
   };
 
+  const getUser = async () => {
+    const reponse = await fetch("/api/user?name=provider", {
+      method: "GET",
+    });
+    const resp = await reponse.json();
+    console.log("ad ", resp);
+    setScore(resp.score);
+  };
+
   const addDigital = async (digital) => {
     const response = await fetch("/api/digital", {
       method: "POST",
@@ -25,9 +34,6 @@ const AddPage = () => {
     await response.json();
     await getDigital();
     setItemName("");
-
-    //增加积分
-    setScore(score + 1);
   };
 
   const handleItemNameChange = (e) => {
@@ -36,6 +42,7 @@ const AddPage = () => {
 
   useEffect(() => {
     getDigital();
+    getUser();
   }, []);
 
   const columns = [

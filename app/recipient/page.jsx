@@ -88,10 +88,17 @@ const Page = () => {
                 value.uuid === changeUid ? { ...value, status: status } : value
               )
             );
+
             //同时上传后端接口
             fetch("/api/donor", {
               method: "PUT",
               body: JSON.stringify({ uuid: changeUid, status: status }),
+            });
+
+            //如果是收货，则为donor增加积分
+            fetch("/api/user", {
+              method: "POST",
+              body: JSON.stringify({ name: "recipient" }),
             });
           }}
         >
