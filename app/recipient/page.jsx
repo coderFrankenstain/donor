@@ -96,10 +96,12 @@ const Page = () => {
             });
 
             //如果是收货，则为donor增加积分
-            fetch("/api/user", {
-              method: "POST",
-              body: JSON.stringify({ name: "recipient" }),
-            });
+            if (status === 3) {
+              fetch("/api/user", {
+                method: "POST",
+                body: JSON.stringify({ name: "recipient" }),
+              });
+            }
           }}
         >
           {record.status === 2 ? "收货" : "获取"}

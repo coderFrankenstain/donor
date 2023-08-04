@@ -22,7 +22,7 @@ export async function POST(request) {
     donor = { score: donor.score - 1 };
     provider = { score: provider.score + 1 };
   } else {   //捐赠成功
-    donor = { score: provider.score + 1 };
+    donor = { score: donor.score + 1 };
   }
 
   return NextResponse.json({ status: 200 });
