@@ -64,7 +64,7 @@ const Page = () => {
         if (record.status === 0) {
           status = "未捐赠";
         } else if (record.status === 1) {
-          status = "已捐赠";
+          status = "等待发货";
         } else if (record.status == 2) {
           status = "已发货";
         } else {
@@ -77,35 +77,56 @@ const Page = () => {
       title: "操作",
       key: "action",
       render: (text, record) => (
-        <Button
-          disabled={record.status !== 0 && record.status !== 2}
-          onClick={() => {
-            const changeUid = record.uuid;
-            const status = record.status + 1;
-            //本地更改
-            setData(
-              data.map((value) =>
-                value.uuid === changeUid ? { ...value, status: status } : value
-              )
-            );
 
-            //同时上传后端接口
-            fetch("/api/donor", {
-              method: "PUT",
-              body: JSON.stringify({ uuid: changeUid, status: status }),
+        record.status === 0 ?<AddressSelectModal trigger={(address )=>{
+          const changeUid = record.uuid;
+          const status = record.status + 1;
+          //本地更改
+          setData(
+            data.map((value) =>
+              value.uuid === changeUid ? { ...value, status: status } : value
+            )
+          );
+          
+          //同时上传后端接口
+          fetch("/api/donor", {
+            method: "PUT",
+            body: JSON.stringify({ uuid: changeUid, status: status,address:address}),
+          });
+
+          console.log(`上传的地址 ${address}`)
+
+        }}></AddressSelectModal> :<Button
+        disabled={record.status !== 0 && record.status !== 2}
+        onClick={() => {
+          const changeUid = record.uuid;
+          const status = record.status + 1;
+          //本地更改
+          setData(
+            data.map((value) =>
+              value.uuid === changeUid ? { ...value, status: status } : value
+            )
+          );
+
+          //同时上传后端接口
+          fetch("/api/donor", {
+            method: "PUT",
+            body: JSON.stringify({ uuid: changeUid, status: status }),
+          });
+
+          //如果是收货，则为donor增加积分
+          if (status === 3) {
+            fetch("/api/user", {
+              method: "POST",
+              body: JSON.stringify({ name: "recipient" }),
             });
-
-            //如果是收货，则为donor增加积分
-            if (status === 3) {
-              fetch("/api/user", {
-                method: "POST",
-                body: JSON.stringify({ name: "recipient" }),
-              });
-            }
-          }}
-        >
-          {record.status === 2 ? "收货" : "获取"}
-        </Button>
+          }
+        }}
+      >
+        {record.status === 2 ? "确认收货" : "获取"}
+      </Button>
+        
+        
       ),
     },
   ];

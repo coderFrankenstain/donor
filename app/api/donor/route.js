@@ -15,18 +15,16 @@ function randomUrl() {
 }
 
 let donor = [];
-console.log("你好", donor);
-
 //生成
 
 //交互端点
 export async function POST(request) {
-  const { name, status } = await request.json();
+  const { name, status,imageUrl } = await request.json();
   donor.push({
     name,
     status,
     uuid: uuidv4(),
-    url: randomUrl(),
+    url: imageUrl,
   });
   return NextResponse.json({ status: 200 });
 }
@@ -36,9 +34,9 @@ export async function GET(request) {
 }
 
 export async function PUT(request) {
-  const { uuid, status } = await request.json();
+  const { uuid, status,address } = await request.json();
   donor = donor.map((value) =>
-    value.uuid === uuid ? { ...value, status: status } : value
+    value.uuid === uuid ? { ...value, status: status,address:address } : value
   );
   console.log("donor", donor);
   return NextResponse.json(donor);

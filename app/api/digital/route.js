@@ -20,12 +20,12 @@ let digitals = [];
 
 //交互端点
 export async function POST(request) {
-  const { name, status } = await request.json();
+  const { name, status, imageUrl} = await request.json();
   digitals.push({
     name,
     status,
     uuid: uuidv4(),
-    url: randomUrl(),
+    url: imageUrl,
   });
   return NextResponse.json({ status: 200 });
 }

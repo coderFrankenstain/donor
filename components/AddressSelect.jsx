@@ -3,15 +3,15 @@ import { useState } from "react";
 
 const options = [
   {
-    value: "zhejiang",
+    value: "浙江",
     label: "浙江",
     children: [
       {
-        value: "hangzhou",
+        value: "杭州",
         label: "杭州",
         children: [
           {
-            value: "xihu",
+            value: "西湖",
             label: "西湖",
           },
         ],
@@ -19,15 +19,15 @@ const options = [
     ],
   },
   {
-    value: "jiangsu",
+    value: "江苏",
     label: "江苏",
     children: [
       {
-        value: "nanjing",
+        value: "南京",
         label: "南京",
         children: [
           {
-            value: "zhonghuamen",
+            value: "中华门",
             label: "中华门",
           },
         ],
@@ -35,15 +35,79 @@ const options = [
     ],
   },
   {
-    value: "shanghai",
-    label: "上海",
-    children: [
-      {
-        value: "pudong",
-        label: "浦东",
-      },
-    ],
-  },
+    "value": "上海",
+    "label": "上海",
+    "children": [
+        {
+            "value": "浦东新区",
+            "label": "浦东新区"
+        },
+        {
+            "value": "黄浦区",
+            "label": "黄浦区"
+        },
+        {
+            "value": "徐汇区",
+            "label": "徐汇区"
+        },
+        {
+            "value": "长宁区",
+            "label": "长宁区"
+        },
+        {
+            "value": "静安区",
+            "label": "静安区"
+        },
+        {
+            "value": "普陀区",
+            "label": "普陀区"
+        },
+        {
+            "value": "虹口区",
+            "label": "虹口区"
+        },
+        {
+            "value": "杨浦区",
+            "label": "杨浦区"
+        },
+        {
+            "value": "闵行区",
+            "label": "闵行区"
+        },
+        {
+            "value": "宝山区",
+            "label": "宝山区"
+        },
+        {
+            "value": "嘉定区",
+            "label": "嘉定区"
+        },
+        {
+            "value": "浦东区",
+            "label": "浦东区"
+        },
+        {
+            "value": "金山区",
+            "label": "金山区"
+        },
+        {
+            "value": "松江区",
+            "label": "松江区"
+        },
+        {
+            "value": "青浦区",
+            "label": "青浦区"
+        },
+        {
+            "value": "奉贤区",
+            "label": "奉贤区"
+        },
+        {
+            "value": "崇明区",
+            "label": "崇明区"
+        }
+    ]
+}
 ];
 const AddressSelectModal = ({ trigger }) => {
   const [isModalVisible, setIsModalVisible] = useState(false); // 模态框的显示状态
@@ -51,7 +115,7 @@ const AddressSelectModal = ({ trigger }) => {
 
   // 更新选中地址
   const handleAddressChange = (value) => {
-    setSelectedAddress(value);
+    setSelectedAddress(value.join(' '));
   };
 
   // 打开模态框
@@ -73,7 +137,7 @@ const AddressSelectModal = ({ trigger }) => {
   return (
     <>
       <Button type="primary" onClick={showModal}>
-        选择地址
+        获取捐赠
       </Button>
       <Modal
         title="请选择地址"
