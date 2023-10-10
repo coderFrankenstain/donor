@@ -17,7 +17,7 @@ services:
 
   nginx:
       image: nginx:latest
-      container_name: nginx-gateway
+      container_name: nginx-gateway-ai
       restart: always
       privileged: true
       environment:
