@@ -120,7 +120,7 @@ const AddPage = () => {
 
       // 你现在可以使用这个"path"值做任何你想做的事
       console.log(path);
-      setImageUrl(baseUrl + path);
+      setImageUrl("http://104.243.44.72:3001/upload/" + path);
 
     }
   };
@@ -156,7 +156,7 @@ const AddPage = () => {
             <div
               style={{ width: "100%", height: "100%", position: "relative" }}
             >
-              <Image src={imageUrl} alt="avatar" layout="fill"></Image>
+              <Image src={imageUrl} alt="avatar" layout="fill" ></Image>
             </div>
           ) : (
             uploadButton
