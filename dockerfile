@@ -8,8 +8,7 @@ WORKDIR /app
 COPY package*.json ./
 
 RUN npm config delete proxy
-RUN npm config delete http-proxy
-RUN npm config delete https-proxy
+
 # 安装项目依赖
 RUN npm install
 
