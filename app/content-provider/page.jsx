@@ -67,7 +67,7 @@ const AddPage = () => {
       key: "url",
       render: (text, record) => {
         return (
-          <Image src={record.url} alt={record.name} width={200} height={150} />
+          <Image src={record.url} alt={record.name} width={200} height={150} unoptimized={true} />
         );
       },
     },
@@ -156,7 +156,7 @@ const AddPage = () => {
             <div
               style={{ width: "100%", height: "100%", position: "relative" }}
             >
-              <Image src={imageUrl} alt="avatar" layout="fill" ></Image>
+              <Image src={imageUrl} alt="avatar" layout="fill" unoptimized={true}></Image>
             </div>
           ) : (
             uploadButton
