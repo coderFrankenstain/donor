@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { Upload, Button, Input, message, Space, Table, Modal } from "antd";
 import Image from "next/image";
 import { LoadingOutlined, PlusOutlined } from "@ant-design/icons";
-
+import { baseUrl } from "@/constant";
 // 请求方法
 
 const beforeUpload = (file) => {
@@ -171,7 +171,7 @@ const AddPage = () => {
 
       // 你现在可以使用这个"path"值做任何你想做的事
       console.log(path);
-      setImageUrl("/uploads/" + path);
+      setImageUrl(baseUrl + path);
     }
   };
 

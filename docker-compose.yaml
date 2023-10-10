@@ -13,4 +13,17 @@ services:
       - "3000:3000"  # 映射容器的3000端口到主机的3000端口
     restart: always  # 如果容器停止，则自动重启容器
     volumes:
-      - ./public:/app/public  # 如果你想要挂载public目录，可以通过这个设置
+      - ./upload:/app/upload  # 如果你想要挂载public目录，可以通过这个设置
+
+  nginx:
+      image: nginx:latest
+      container_name: nginx-gateway
+      restart: always
+      privileged: true
+      environment:
+        - TZ=Asia/Shanghai
+      volumes:
+        - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf
+        - ./upload:/usr/share/nginx/html/upload
+      ports:
+        - "80:80"

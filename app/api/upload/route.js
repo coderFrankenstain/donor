@@ -17,7 +17,7 @@ export async function POST(request) {
   const filename = myUUID + extension
   // With the file data in the buffer, you can do whatever you want with it.
   // For this, we'll just write it to the filesystem in a new location
-  const path = `./public/uploads/${filename}`
+  const path = `/app/upload/${filename}`
   await writeFile(path, buffer)
   console.log(`open ${filename} to see the uploaded file`)
 
