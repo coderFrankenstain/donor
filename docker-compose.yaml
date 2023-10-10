@@ -1,0 +1,16 @@
+version: '3.8'  # 选择适合你Docker环境的Compose文件版本
+
+services:
+  donor:
+    image: donor:latest  # 根据你的实际情况，你可能需要为这个镜像指定一个名称或标签
+    container_name: dornor
+    build:
+      context: .  # 构建上下文设置为当前目录
+      dockerfile: Dockerfile  # 指定Dockerfile的路径
+    environment:
+      - NODE_ENV=production
+    ports:
+      - "3000:3000"  # 映射容器的3000端口到主机的3000端口
+    restart: always  # 如果容器停止，则自动重启容器
+    volumes:
+      - ./public:/app/public  # 如果你想要挂载public目录，可以通过这个设置
