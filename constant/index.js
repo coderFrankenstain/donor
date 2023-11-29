@@ -4,4 +4,4 @@ export const Role = [
   { name: "数字创作者" },
 ];
 
-export const  baseUrl = "http://104.243.44.72:3001/upload/"
+export const  baseUrl = "http://18.143.105.18:3001/upload/"

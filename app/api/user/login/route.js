@@ -7,12 +7,14 @@ export async function POST(request) {
     const sql = "SELECT * FROM user WHERE username = ? AND password = ?";
     const [users] = await pool.query(sql, [username, password]);
     if (users.length > 0) {
-        return NextResponse.json({code:200})
+      var user = users[0];
+      console.log("用户id 为 ", user);
+      return NextResponse.json({ code: 200, data: user });
     } else {
-        return NextResponse.json({code:-1})
+      return NextResponse.json({ code: -1 });
     }
   } catch (error) {
     console.error("Insertion error:", error);
-    return NextResponse.json({code:-1})
+    return NextResponse.json({ code: -1 });
   }
 }

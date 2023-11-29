@@ -1,4 +1,6 @@
 import { NextResponse } from "next/server";
+import pool from "../db/db"; // 确保路径正确
+
 const { v4: uuidv4 } = require("uuid");
 
 let images = [
@@ -19,24 +21,43 @@ let donor = [];
 
 //交互端点
 export async function POST(request) {
-  const { name, status,imageUrl } = await request.json();
-  donor.push({
-    name,
+  //添加新商品
+  const { title, status, image, creatorId, content, ownerId } =
+    await request.json();
+  // 插入新用户
+  const insertSql =
+    "INSERT INTO item (title, status,image,creatorId,content) VALUES (?, ?,?,?,?)";
+  const [results, fields] = await pool.query(insertSql, [
+    title,
     status,
-    uuid: uuidv4(),
-    url: imageUrl,
-  });
-  return NextResponse.json({ status: 200 });
+    image,
+    creatorId,
+    content,
+  ]);
+  const insertedId = results.insertId;
+
+  return NextResponse.json({ status: 200, data: insertedId });
 }
 
 export async function GET(request) {
-  return NextResponse.json(donor);
+  const { searchParams } = new URL(request.url);
+  const creatorId = searchParams.get("creatorId");
+  var sql;
+  if (creatorId) {
+    sql = `SELECT * FROM item where type=0 and creatorId=${creatorId}`;
+  } else {
+    sql = "SELECT * FROM item where type=0";
+  }
+
+  const [users] = await pool.query(sql);
+  console.log("查询结果 ", users);
+  return NextResponse.json({ status: 200, data: users });
 }
 
 export async function PUT(request) {
-  const { uuid, status,address } = await request.json();
+  const { uuid, status, address } = await request.json();
   donor = donor.map((value) =>
-    value.uuid === uuid ? { ...value, status: status,address:address } : value
+    value.uuid === uuid ? { ...value, status: status, address: address } : value
   );
   console.log("donor", donor);
   return NextResponse.json(donor);

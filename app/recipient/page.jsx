@@ -36,7 +36,7 @@ const Page = () => {
   };
 
   useEffect(() => {
-    getDonor();
+    // getDonor();
   }, []);
 
   const columns = [
@@ -76,58 +76,67 @@ const Page = () => {
     {
       title: "操作",
       key: "action",
-      render: (text, record) => (
+      render: (text, record) =>
+        record.status === 0 ? (
+          <AddressSelectModal
+            trigger={(address) => {
+              const changeUid = record.uuid;
+              const status = record.status + 1;
+              //本地更改
+              setData(
+                data.map((value) =>
+                  value.uuid === changeUid
+                    ? { ...value, status: status }
+                    : value
+                )
+              );
 
-        record.status === 0 ?<AddressSelectModal trigger={(address )=>{
-          const changeUid = record.uuid;
-          const status = record.status + 1;
-          //本地更改
-          setData(
-            data.map((value) =>
-              value.uuid === changeUid ? { ...value, status: status } : value
-            )
-          );
-          
-          //同时上传后端接口
-          fetch("/api/donor", {
-            method: "PUT",
-            body: JSON.stringify({ uuid: changeUid, status: status,address:address}),
-          });
+              //同时上传后端接口
+              fetch("/api/donor", {
+                method: "PUT",
+                body: JSON.stringify({
+                  uuid: changeUid,
+                  status: status,
+                  address: address,
+                }),
+              });
 
-          console.log(`上传的地址 ${address}`)
+              console.log(`上传的地址 ${address}`);
+            }}
+          ></AddressSelectModal>
+        ) : (
+          <Button
+            disabled={record.status !== 0 && record.status !== 2}
+            onClick={() => {
+              const changeUid = record.uuid;
+              const status = record.status + 1;
+              //本地更改
+              setData(
+                data.map((value) =>
+                  value.uuid === changeUid
+                    ? { ...value, status: status }
+                    : value
+                )
+              );
 
-        }}></AddressSelectModal> :<Button
-        disabled={record.status !== 0 && record.status !== 2}
-        onClick={() => {
-          const changeUid = record.uuid;
-          const status = record.status + 1;
-          //本地更改
-          setData(
-            data.map((value) =>
-              value.uuid === changeUid ? { ...value, status: status } : value
-            )
-          );
+              //同时上传后端接口
+              fetch("/api/donor", {
+                method: "PUT",
+                body: JSON.stringify({ uuid: changeUid, status: status }),
+              });
 
-          //同时上传后端接口
-          fetch("/api/donor", {
-            method: "PUT",
-            body: JSON.stringify({ uuid: changeUid, status: status }),
-          });
-
-          //如果是收货，则为donor增加积分
-          if (status === 3) {
-            fetch("/api/user", {
-              method: "POST",
-              body: JSON.stringify({ name: "recipient" }),
-            });
-          }
-        }}
-      >
-        {record.status === 2 ? "确认收货" : "获取"}
-      </Button>
-        
-        
-      ),
+              //如果是收货，则为donor增加积分
+              if (status === 3) {
+                fetch("/api/user", {
+                  method: "POST",
+                  body: JSON.stringify({ name: "recipient" }),
+                });
+              }
+            }}
+          >
+            {record.status === 2 ? "确认收货" : "获取"}
+          </Button>
+        ),
     },
   ];
 

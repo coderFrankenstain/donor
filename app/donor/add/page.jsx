@@ -4,6 +4,8 @@ import { Upload, Button, Input, message, Space, Table, Modal } from "antd";
 import Image from "next/image";
 import { LoadingOutlined, PlusOutlined } from "@ant-design/icons";
 import { baseUrl } from "@/constant";
+import { useRouter } from "next/navigation";
+
 // 请求方法
 
 const beforeUpload = (file) => {
@@ -21,16 +23,20 @@ const beforeUpload = (file) => {
 const AddPage = () => {
   const [data, setData] = useState([]);
   const [itemName, setItemName] = useState("");
+  const [itemDesc, setItemDesc] = useState("");
   const [loading, setLoading] = useState(false);
   const [imageUrl, setImageUrl] = useState();
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [user, setUser] = useState(null);
+  const router = useRouter();
 
-  const getDonor = async () => {
-    const response = await fetch("/api/donor", {
+  const getDonor = async (userId) => {
+    const response = await fetch(`/api/donor?creatorId=${userId}`, {
       method: "GET",
     });
     const data = await response.json();
-    setData(data);
+    console.log("back data ", data);
+    setData(data.data);
   };
 
   const addDonor = async (donor) => {
@@ -39,8 +45,10 @@ const AddPage = () => {
       body: JSON.stringify(donor),
     });
     await response.json();
-    await getDonor();
+    await getDonor(user.id);
     setItemName("");
+    setItemDesc("");
+
   };
 
   const handleAddressSelected = (address, changeUid) => {
@@ -61,8 +69,21 @@ const AddPage = () => {
     setItemName(e.target.value);
   };
 
+  const handleItemDescChange = (e) => {
+    setItemDesc(e.target.value);
+  };
+
   useEffect(() => {
-    getDonor();
+    const userData = JSON.parse(localStorage.getItem("userData"));
+    console.log("your id is ", userData);
+
+    if (userData) {
+      setUser(userData);
+    } else {
+      router.push("/login");
+    }
+
+    getDonor(userData.id);
   }, []);
 
   const columns = [
@@ -72,14 +93,20 @@ const AddPage = () => {
       key: "url",
       render: (text, record) => {
         return (
-          <Image src={record.url} alt={record.name} width={200} height={150} unoptimized={true}/>
+          <Image
+            src={record.image}
+            alt={record.title}
+            width={200}
+            height={150}
+            unoptimized={true}
+          />
         );
       },
     },
     {
       title: "名称",
-      dataIndex: "name",
-      key: "name",
+      dataIndex: "title",
+      key: "title",
     },
     {
       title: "状态",
@@ -118,7 +145,6 @@ const AddPage = () => {
             onOk={() => {
               handleAddressSelected("", record.uuid);
               setIsModalOpen(false);
-
             }}
             onCancel={() => {
               setIsModalOpen(false);
@@ -171,7 +197,7 @@ const AddPage = () => {
 
       // 你现在可以使用这个"path"值做任何你想做的事
       console.log(path);
-      setImageUrl("http://104.243.44.72:3001/upload/" + path);
+      setImageUrl("http://18.143.105.18:3001/upload/" + path);
     }
   };
 
@@ -186,6 +212,11 @@ const AddPage = () => {
           placeholder="请输入名称"
           onChange={handleItemNameChange}
         />
+        <Input
+          value={itemDesc}
+          placeholder="请输入描述"
+          onChange={handleItemDescChange}
+        />
         <Upload
           name="file"
           listType="picture-card"
@@ -199,7 +230,12 @@ const AddPage = () => {
             <div
               style={{ width: "100%", height: "100%", position: "relative" }}
             >
-              <Image src={imageUrl} alt="avatar" layout="fill" unoptimized={true}></Image>
+              <Image
+                src={imageUrl}
+                alt="avatar"
+                layout="fill"
+                unoptimized={true}
+              ></Image>
             </div>
           ) : (
             uploadButton
@@ -214,11 +250,21 @@ const AddPage = () => {
               message.error("请输入物品名称");
               return;
             }
+            if (itemDesc === "") {
+              message.error("请输入物品描述");
+              return;
+            }
             if (imageUrl === "") {
               message.error("请选择图片");
               return;
             }
-            addDonor({ name: itemName, status: 0, imageUrl: imageUrl });
+            addDonor({
+              title: itemName,
+              status: 0,
+              image: imageUrl || "",
+              creatorId: user.id,
+              content: itemDesc,
+            });
           }}
         >
           发布

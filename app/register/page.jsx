@@ -1,9 +1,10 @@
 "use client";
 import React from "react";
 import { Form, Input, Button, Radio, message, Space } from "antd";
-
+import { useRouter } from "next/navigation";
 const RegisterPage = () => {
   const [form] = Form.useForm();
+  const router = useRouter();
 
   const onFinish = async (values) => {
     // 在这里处理登录逻辑
@@ -102,6 +103,7 @@ const RegisterPage = () => {
           block
           onClick={() => {
             /* 导航到登录页面逻辑 */
+            router.push("/login");
           }}
         >
           去 登录

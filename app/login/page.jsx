@@ -1,8 +1,11 @@
 "use client";
 import React from "react";
 import { Form, Input, Button, Checkbox, message } from "antd";
+import { useRouter } from "next/navigation";
 
 const LoginPage = () => {
+  const router = useRouter();
+
   const onFinish = async (values) => {
     // 在这里处理登录逻辑
     const response = await fetch("/api/user/login", {
@@ -12,6 +15,9 @@ const LoginPage = () => {
     const result = await response.json();
     if (result.code == 200) {
       message.success("登录成功");
+      console.log("user login data ", result.data);
+      localStorage.setItem("userData", JSON.stringify(result.data));
+      router.push("/home");
     } else {
       message.error("登录失败");
     }
@@ -60,7 +66,7 @@ const LoginPage = () => {
             htmlType="button"
             block
             onClick={() => {
-              /* 导航到登录页面逻辑 */
+              router.push("/register");
             }}
           >
             去注册
