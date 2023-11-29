@@ -2,7 +2,6 @@ version: '3.8'
 
 services:
   donor:
-    image: donor:latest
     container_name: dornor
     build:
       context: .
