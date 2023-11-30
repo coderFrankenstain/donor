@@ -7,11 +7,14 @@ const { Header, Content, Footer } = Layout;
 const { TabPane } = Tabs;
 
 const HomePage = () => {
-  const user = JSON.parse(sessionStorage.getItem("userData"));
   const [data, setData] = useState([]);
+  const [user , serUser] = useState();
   const router = useRouter();
 
   useEffect(() => {
+    let temp = JSON.parse(sessionStorage.getItem("userData"));
+    serUser(temp)
+    
     getDonor();
   }, []);
 

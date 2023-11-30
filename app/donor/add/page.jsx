@@ -27,7 +27,7 @@ const AddPage = () => {
   const [loading, setLoading] = useState(false);
   const [imageUrl, setImageUrl] = useState();
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const userData = JSON.parse(sessionStorage.getItem("userData"));
+  const [userData, setUserData] = useState(null)
 
   const getDonor = async (userId) => {
     const response = await fetch(`/api/donor?creatorId=${userId}`, {
@@ -72,7 +72,10 @@ const AddPage = () => {
   };
 
   useEffect(() => {
-    getDonor(userData.id);
+    let temp = JSON.parse(sessionStorage.getItem("userData"))
+    setUserData(temp)
+
+    getDonor(temp.id);
   }, []);
 
   const columns = [
