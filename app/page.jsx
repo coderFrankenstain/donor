@@ -1,5 +1,6 @@
 "use client";
-
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { Space, Card, Button, message } from "antd";
 import Link from "next/link";
 // 在这个上下文中，我们可以为这三类用户取一些相关的、描述性的名字：
@@ -40,15 +41,14 @@ function UserCard({ user, link }) {
 }
 
 export default function Home() {
+  const router = useRouter();
+  useEffect(() => {
+    router.push("/login");
+  }, []);
+
   return (
     <div className="home">
-      <div className="text-primary-orange">
-        <Space size={"large"}>
-          <UserCard link={"/donor/add"} user={Role[0]} />
-          <UserCard link={"/recipient"} user={Role[1]} />
-          <UserCard link={"/content-provider"} user={Role[2]} />
-        </Space>
-      </div>
+      <div className="text-primary-orange">正在跳转</div>
     </div>
   );
 }
