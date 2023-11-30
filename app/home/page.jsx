@@ -9,14 +9,15 @@ const { TabPane } = Tabs;
 
 const HomePage = () => {
   const [data, setData] = useState([]);
-  const [user , serUser] = useState();
+  const [user, serUser] = useState();
   const router = useRouter();
 
   useEffect(() => {
     let temp = JSON.parse(sessionStorage.getItem("userData"));
-    serUser(temp)
+    serUser(temp);
 
     getDonor();
+    getUser(temp.id);
   }, []);
 
   const handleManager = () => {
@@ -41,7 +42,31 @@ const HomePage = () => {
     setData(result);
   };
 
-  const getDigital = () => {};
+  const getDigital = async () => {
+    const response = await fetch(`/api/digital`, {
+      method: "GET",
+    });
+
+    const data = await response.json();
+    const result = data.data.filter((record) => record.status === 0);
+    console.log("back data ", result);
+    setData(result);
+  };
+
+  const getUser = async (userId) => {
+    const response = await fetch(`/api/user?userId=${userId}`, {
+      method: "GET",
+    });
+    const result = await response.json();
+    if (result.code == 200) {
+      console.log("user login data ", result.data);
+      const userdata = JSON.stringify(result.data);
+      sessionStorage.setItem("userData", userdata);
+      serUser(result.data);
+    } else {
+      message.error("登录失败");
+    }
+  };
 
   // 示例用户信息
   const userInfo = (
@@ -75,7 +100,7 @@ const HomePage = () => {
         <p style={{ height: "32px", margin: "0" }}>
           用户积分: {user && user.score}
         </p>{" "}
-        <p style={{ height: "32px", margin: "0" }}>
+        <div style={{ height: "32px", margin: "0" }}>
           <Space>
             <Button
               onClick={() => {
@@ -86,7 +111,7 @@ const HomePage = () => {
               管理页面{" "}
             </Button>
           </Space>
-        </p>{" "}
+        </div>{" "}
         {/* 如果需要，也可以调整这里的间距 */}
       </div>
     </Header>
@@ -97,8 +122,10 @@ const HomePage = () => {
     console.log("当前选中 ", activateKey);
     if (activateKey == 1) {
       //捐赠物品
+      getDonor();
     } else {
       //数字艺术品
+      getDigital();
     }
   };
 
@@ -134,12 +161,12 @@ const HomePage = () => {
             }}
           >
             <Image
-            src={record.image}
-            alt={record.title}
-            width={200}
-            height={200}
-            unoptimized={true}
-          />
+              src={record.image}
+              alt={record.title}
+              width={200}
+              height={200}
+              unoptimized={true}
+            />
           </Card>
         </Col>
       ))}

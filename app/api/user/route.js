@@ -6,15 +6,23 @@ let donor = { score: 10 };
 let provider = { score: 10 };
 
 export async function GET(request) {
-  const name = request.nextUrl.searchParams.get("name");
-  let user;
-  if (name == "donor") {
-    user = donor;
-  } else {
-    user = provider;
+  const userId = request.nextUrl.searchParams.get("userId");
+ 
+  try {
+    const sql = "SELECT * FROM user WHERE id = ? ";
+    const [users] = await pool.query(sql, [userId]);
+    if (users.length > 0) {
+      var user = users[0];
+      console.log("用户id 为 ", user);
+      return NextResponse.json({ code: 200, data: user });
+    } else {
+      return NextResponse.json({ code: -1 });
+    }
+  } catch (error) {
+    console.error("Insertion error:", error);
+    return NextResponse.json({ code: -1 });
   }
-  console.log("score ", user);
-  return NextResponse.json({ score: user.score });
+
 }
 
 export async function POST(request) {

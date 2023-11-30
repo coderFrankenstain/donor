@@ -1,28 +1,13 @@
 import { NextResponse } from "next/server";
 import pool from "../db/db"; // 确保路径正确
 
-const { v4: uuidv4 } = require("uuid");
-
-let images = [
-  "https://images.pexels.com/photos/45982/pexels-photo-45982.jpeg?auto=compress&cs=tinysrgb&w=400&h=300&dpr=1",
-  "https://images.pexels.com/photos/4495705/pexels-photo-4495705.jpeg?auto=compress&cs=tinysrgb&w=400&h=300&dpr=1",
-  "https://images.pexels.com/photos/1082528/pexels-photo-1082528.jpeg?auto=compress&cs=tinysrgb&w=400&h=300&dpr=1",
-  "https://images.pexels.com/photos/179909/pexels-photo-179909.jpeg?auto=compress&cs=tinysrgb&w=400&h=300&dpr=1",
-  "https://images.pexels.com/photos/5705478/pexels-photo-5705478.jpeg?auto=compress&cs=tinysrgb&w=400&h=300&dpr=1",
-];
-
-function randomUrl() {
-  let imageUrl = images[Math.floor(Math.random() * images.length)];
-  return imageUrl;
-}
-
 let donor = [];
 //生成
 
 //新增
 export async function POST(request) {
   //添加新商品
-  const { title, status, image, creatorId, content, ownerId } =
+  const { title, status, image, creatorId, content } =
     await request.json();
   // 插入新用户
   const insertSql =

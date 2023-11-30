@@ -1,6 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { Button, Input, message, Space, Table,Upload } from "antd";
+import { Button, Input, message, Space, Table, Upload } from "antd";
 import Image from "next/image";
 import { LoadingOutlined, PlusOutlined } from "@ant-design/icons";
 
@@ -20,16 +20,18 @@ const beforeUpload = (file) => {
 const AddPage = () => {
   const [data, setData] = useState([]);
   const [itemName, setItemName] = useState("");
-  const [score, setScore] = useState(10);
+  const [itemDesc, setItemDesc] = useState("");
+  const [itemScore, setItemScore] = useState("");
   const [loading, setLoading] = useState(false);
   const [imageUrl, setImageUrl] = useState();
-  
-  const getDigital = async () => {
-    const response = await fetch("/api/digital", {
+  const [userData, setUserData] = useState(null);
+
+  const getDigital = async (userId) => {
+    const response = await fetch(`/api/digital?creator=${userId}`, {
       method: "GET",
     });
     const data = await response.json();
-    setData(data);
+    setData(data.data);
   };
 
   const getUser = async () => {
@@ -38,7 +40,7 @@ const AddPage = () => {
     });
     const resp = await reponse.json();
     console.log("ad ", resp);
-    setScore(resp.score);
+    setItemScore(resp.score);
   };
 
   const addDigital = async (digital) => {
@@ -47,16 +49,29 @@ const AddPage = () => {
       body: JSON.stringify(digital),
     });
     await response.json();
-    await getDigital();
+    await getDigital(userData.id);
     setItemName("");
+    setItemDesc("");
+    setItemScore("");
   };
 
   const handleItemNameChange = (e) => {
     setItemName(e.target.value);
   };
 
+  const handleItemDescChange = (e) => {
+    setItemDesc(e.target.value);
+  };
+
+  const handleItemScoreChange = (e) => {
+    setItemScore(e.target.value);
+  };
+
   useEffect(() => {
-    getDigital();
+    let temp = JSON.parse(sessionStorage.getItem("userData"));
+    setUserData(temp);
+
+    getDigital(temp.id);
     getUser();
   }, []);
 
@@ -67,14 +82,20 @@ const AddPage = () => {
       key: "url",
       render: (text, record) => {
         return (
-          <Image src={record.url} alt={record.name} width={200} height={150} unoptimized={true} />
+          <Image
+            src={record.image}
+            alt={record.title}
+            width={200}
+            height={150}
+            unoptimized={true}
+          />
         );
       },
     },
     {
       title: "名称",
-      dataIndex: "name",
-      key: "name",
+      dataIndex: "title",
+      key: "title",
     },
     {
       title: "状态",
@@ -91,7 +112,6 @@ const AddPage = () => {
       },
     },
   ];
-
 
   const uploadButton = (
     <div>
@@ -121,7 +141,6 @@ const AddPage = () => {
       // 你现在可以使用这个"path"值做任何你想做的事
       console.log(path);
       setImageUrl("/upload/" + path);
-
     }
   };
 
@@ -135,7 +154,7 @@ const AddPage = () => {
       }}
     >
       <h1>发布数字艺术品</h1>
-      <p>用户当前当前积分 {score}</p>
+      <p>用户当前当前积分 {userData && userData.score}</p>
 
       <Space style={{ width: "40%" }} direction="vertical" size="large">
         <Input
@@ -143,7 +162,17 @@ const AddPage = () => {
           placeholder="请输入名称"
           onChange={handleItemNameChange}
         />
-       <Upload
+        <Input
+          value={itemDesc}
+          placeholder="请输入描述"
+          onChange={handleItemDescChange}
+        />
+        <Input
+          value={itemScore}
+          placeholder="请输入点数"
+          onChange={handleItemScoreChange}
+        />
+        <Upload
           name="file"
           listType="picture-card"
           className="avatar-uploader"
@@ -156,7 +185,12 @@ const AddPage = () => {
             <div
               style={{ width: "100%", height: "100%", position: "relative" }}
             >
-              <Image src={imageUrl} alt="avatar" layout="fill" unoptimized={true}></Image>
+              <Image
+                src={imageUrl}
+                alt="avatar"
+                layout="fill"
+                unoptimized={true}
+              ></Image>
             </div>
           ) : (
             uploadButton
@@ -170,7 +204,14 @@ const AddPage = () => {
               message.error("请输入物品名称");
               return;
             }
-            addDigital({ name: itemName, status: 0, imageUrl:imageUrl});
+            addDigital({
+              title: itemName,
+              status: 0,
+              image: imageUrl || "",
+              creatorId: userData.id,
+              content: itemDesc,
+              score: itemScore,
+            });
           }}
         >
           发布

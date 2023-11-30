@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { Button, Card, Col, Input, Row, Typography } from "antd";
+import { Button, Card, Col, Input, Row, Typography, message } from "antd";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 
@@ -38,6 +38,11 @@ const DetailPage = ({ params }) => {
   }, [router]);
 
   const purchase = async () => {
+    if (item.creatorId === user.id) {
+      message.error("不能购买自己的发布的商品");
+      return;
+    }
+
     const response = await fetch("/api/donor", {
       method: "PUT",
       body: JSON.stringify({
@@ -50,6 +55,17 @@ const DetailPage = ({ params }) => {
     let data = await response.json();
     if (data.status == 200) {
       console.log("购买成功");
+
+      fetch("/api/user", {
+        method: "POST",
+        body: JSON.stringify({
+          creatorId: user.id,
+          score: -item.score,
+        }),
+      });
+
+      message.success("购买成功");
+      router.back();
     }
   };
 
@@ -64,14 +80,25 @@ const DetailPage = ({ params }) => {
         </Paragraph>
       </Typography>
       <Row gutter={16}>
-        <Card title={`物品照片 ${index + 1}`} bordered={false}>
-          <Image
+        <Card title={`物品照片`} bordered={false}>
+          {item ? (
+            <Image
+              src={item && item.image}
+              alt={item && item.title}
+              width={200}
+              height={200}
+              unoptimized={true}
+            />
+          ) : (
+            <></>
+          )}
+          {/* <Image
             src={item && item.image}
             alt={item && item.title}
             width={200}
             height={200}
             unoptimized={true}
-          />
+          /> */}
         </Card>
       </Row>
       <Card title="物品描述" style={{ marginTop: "20px" }}>

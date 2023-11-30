@@ -18,34 +18,36 @@ const siderItems = [
 const DonorLayout = ({ children }) => {
   const lastPart = usePathname().split("/").pop();
   console.log("last part ", lastPart);
-  return (
-    <Layout style={{ width: "100%" }}>
-      <Sider>
-        <Menu theme="dark" mode="inline" defaultSelectedKeys={[lastPart]}>
-          {siderItems.map((value) => (
-            <Menu.Item key={value.key} icon={value.icon}>
-              <Link href={`/donor/${value.key.toLowerCase()}`}>
-                {value.label}
-              </Link>
-            </Menu.Item>
-          ))}
-        </Menu>
-      </Sider>
-      <Layout>
-        <Content style={{ margin: "24px 16px 0" }}>
-          <div
-            style={{
-              padding: 24,
-              minHeight: 360,
-              background: "#ffffff",
-            }}
-          >
-            {children}
-          </div>
-        </Content>
-      </Layout>
-    </Layout>
-  );
+  // return (
+  //   <Layout style={{ width: "100%" }}>
+  //     <Sider>
+  //       <Menu theme="dark" mode="inline" defaultSelectedKeys={[lastPart]}>
+  //         {siderItems.map((value) => (
+  //           <Menu.Item key={value.key} icon={value.icon}>
+  //             <Link href={`/donor/${value.key.toLowerCase()}`}>
+  //               {value.label}
+  //             </Link>
+  //           </Menu.Item>
+  //         ))}
+  //       </Menu>
+  //     </Sider>
+  //     <Layout>
+  //       <Content style={{ margin: "24px 16px 0" }}>
+  //         <div
+  //           style={{
+  //             padding: 24,
+  //             minHeight: 360,
+  //             background: "#ffffff",
+  //           }}
+  //         >
+  //           {children}
+  //         </div>
+  //       </Content>
+  //     </Layout>
+  //   </Layout>
+  // );
+  return <Layout style={{ width: "100%" }}>{children}</Layout>;
 };
 
 export default DonorLayout;
+
