@@ -8,13 +8,15 @@ import AddressSelectModal from "@/components/AddressSelect";
 const Page = () => {
   const [data, setData] = useState([]);
   const [itemName, setItemName] = useState("");
+  const user = JSON.parse(sessionStorage.getItem("userData"));
 
-  const getDonor = async () => {
-    const response = await fetch("/api/donor", {
+  const getDonor = async (id) => {
+    const response = await fetch(`/api/donor?ownerId=${id}`, {
       method: "GET",
     });
     const data = await response.json();
-    setData(data);
+    console.log("data is ", data);
+    setData(data.data);
   };
 
   const handleAddressSelected = (address, changeUid) => {
@@ -37,6 +39,9 @@ const Page = () => {
 
   useEffect(() => {
     // getDonor();
+
+    console.log("user is", user);
+    getDonor(user.id);
   }, []);
 
   const columns = [
@@ -46,14 +51,19 @@ const Page = () => {
       key: "url",
       render: (text, record) => {
         return (
-          <Image src={record.url} alt={record.name} width={200} height={150} />
+          <Image
+            src={record.image}
+            alt={record.title}
+            width={200}
+            height={150}
+          />
         );
       },
     },
     {
       title: "名称",
-      dataIndex: "name",
-      key: "name",
+      dataIndex: "title",
+      key: "title",
     },
     {
       title: "状态",
@@ -108,7 +118,7 @@ const Page = () => {
           <Button
             disabled={record.status !== 0 && record.status !== 2}
             onClick={() => {
-              const changeUid = record.uuid;
+              const changeUid = record.id;
               const status = record.status + 1;
               //本地更改
               setData(
@@ -122,19 +132,22 @@ const Page = () => {
               //同时上传后端接口
               fetch("/api/donor", {
                 method: "PUT",
-                body: JSON.stringify({ uuid: changeUid, status: status }),
+                body: JSON.stringify({ id: changeUid, status: status }),
               });
 
               //如果是收货，则为donor增加积分
               if (status === 3) {
                 fetch("/api/user", {
                   method: "POST",
-                  body: JSON.stringify({ name: "recipient" }),
+                  body: JSON.stringify({
+                    creatorId: record.creatorId,
+                    score: 100,
+                  }),
                 });
               }
             }}
           >
-            {record.status === 2 ? "确认收货" : "获取"}
+            {record.status === 2 ? "确认收货" : "完成"}
           </Button>
         ),
     },

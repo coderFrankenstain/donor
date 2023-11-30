@@ -1,4 +1,5 @@
 import { NextResponse, NextRequest } from "next/server";
+import pool from "../db/db"; // 确保路径正确
 
 // 模拟一个全局的存储对象
 let donor = { score: 10 };
@@ -17,13 +18,14 @@ export async function GET(request) {
 }
 
 export async function POST(request) {
-  const { name } = await request.json();
-  if (name == "donor") {  //兑换
-    donor = { score: donor.score - 1 };
-    provider = { score: provider.score + 1 };
-  } else {   //捐赠成功
-    donor = { score: donor.score + 1 };
-  }
+  const { creatorId, score } = await request.json();
 
-  return NextResponse.json({ status: 200 });
+  const sql = `
+  UPDATE user
+  SET  score = score + ?
+  WHERE id = ?
+  `;
+  const result = await pool.query(sql, [score, creatorId]);
+
+  return NextResponse.json({ status: 200, result: result });
 }

@@ -9,6 +9,7 @@ const { Title, Paragraph } = Typography;
 const DetailPage = ({ params }) => {
   const router = useRouter();
   const [user, setUser] = useState(null);
+
   const [item, setItem] = useState(null);
   const cloudId = params.cid;
 
@@ -25,15 +26,31 @@ const DetailPage = ({ params }) => {
   };
 
   useEffect(() => {
-    const userData = JSON.parse(localStorage.getItem("userData"));
+    const userData = sessionStorage.getItem("userData");
     if (userData) {
-      setUser(userData);
+      setUser(JSON.parse(userData));
     } else {
+      // Handle case where there is no user data (e.g., redirect to login)
       router.push("/login");
     }
-
     getItem({ id: cloudId });
   }, [router]);
+
+  const purchase = async () => {
+    const response = await fetch("/api/donor", {
+      method: "PUT",
+      body: JSON.stringify({
+        id: item.id,
+        ownerId: user.id,
+        status: 1,
+      }),
+    });
+
+    let data = await response.json();
+    if (data.status == 200) {
+      console.log("购买成功");
+    }
+  };
 
   return (
     <div style={{ width: "70vw", margin: "auto" }}>
@@ -57,7 +74,7 @@ const DetailPage = ({ params }) => {
       <Card title="物品描述" style={{ marginTop: "20px" }}>
         <p>{item && item.content}</p>
       </Card>
-      <Button type="primary" style={{ marginTop: "20px" }}>
+      <Button onClick={purchase} type="primary" style={{ marginTop: "20px" }}>
         我要购买
       </Button>
     </div>

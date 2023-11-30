@@ -15,8 +15,13 @@ export async function POST(request) {
 
     // 插入新用户
     const insertSql =
-      "INSERT INTO user (username, password,type) VALUES (?, ?,?)";
-    const [user] = await pool.query(insertSql, [username, password, type]);
+      "INSERT INTO user (username, password,type,score) VALUES (?,?,?,?)";
+    const [user] = await pool.query(insertSql, [
+      username,
+      password,
+      type,
+      1000,
+    ]);
     return NextResponse.json({ code: 200, message: "注册成功" });
   } catch (error) {
     console.error("Registration error:", error);

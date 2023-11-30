@@ -7,20 +7,13 @@ const { Header, Content, Footer } = Layout;
 const { TabPane } = Tabs;
 
 const HomePage = () => {
-  const [user, setUser] = useState(null);
+  const user = JSON.parse(sessionStorage.getItem("userData"));
   const [data, setData] = useState([]);
   const router = useRouter();
 
   useEffect(() => {
-    const userData = JSON.parse(localStorage.getItem("userData"));
-    if (userData) {
-      setUser(userData);
-    } else {
-      router.push("/login");
-    }
-
     getDonor();
-  }, [router]);
+  }, []);
 
   const handleManager = () => {
     //0 表示捐赠者， 1表示受助者 2表示数字艺术家
@@ -38,8 +31,10 @@ const HomePage = () => {
       method: "GET",
     });
     const data = await response.json();
-    console.log("back data ", data);
-    setData(data.data);
+    const result = data.data.filter((record) => record.status === 0);
+    console.log("back data ", result);
+
+    setData(result);
   };
 
   const getDigital = () => {};
@@ -148,9 +143,6 @@ const HomePage = () => {
         {donationTabs}
         {cardList}
       </Content>
-      <Footer style={{ textAlign: "center", background: "#f0f2f5" }}>
-        {/* 页脚信息 */}
-      </Footer>
     </Layout>
   );
 };

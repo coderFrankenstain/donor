@@ -16,7 +16,7 @@ const LoginPage = () => {
     if (result.code == 200) {
       message.success("登录成功");
       console.log("user login data ", result.data);
-      localStorage.setItem("userData", JSON.stringify(result.data));
+      sessionStorage.setItem("userData", JSON.stringify(result.data));
       router.push("/home");
     } else {
       message.error("登录失败");

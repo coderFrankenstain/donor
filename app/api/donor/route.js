@@ -19,7 +19,7 @@ function randomUrl() {
 let donor = [];
 //生成
 
-//交互端点
+//新增
 export async function POST(request) {
   //添加新商品
   const { title, status, image, creatorId, content, ownerId } =
@@ -39,14 +39,19 @@ export async function POST(request) {
   return NextResponse.json({ status: 200, data: insertedId });
 }
 
+//查询
 export async function GET(request) {
   const { searchParams } = new URL(request.url);
   const creatorId = searchParams.get("creatorId");
+  const ownerId = searchParams.get("ownerId")
   var sql;
   if (creatorId) {
     sql = `SELECT * FROM item where type=0 and creatorId=${creatorId}`;
   } else {
     sql = "SELECT * FROM item where type=0";
+  }
+  if(ownerId) {
+    sql = `SELECT * FROM item where type=0 and ownerId=${ownerId}`;
   }
 
   const [users] = await pool.query(sql);
@@ -54,11 +59,29 @@ export async function GET(request) {
   return NextResponse.json({ status: 200, data: users });
 }
 
+//修改
 export async function PUT(request) {
-  const { uuid, status, address } = await request.json();
-  donor = donor.map((value) =>
-    value.uuid === uuid ? { ...value, status: status, address: address } : value
-  );
-  console.log("donor", donor);
-  return NextResponse.json(donor);
+  const { id, status, ownerId } = await request.json();
+
+  let sql;
+  let result;
+  if (ownerId === undefined) {
+    sql = `
+    UPDATE item
+    SET  status = ?
+    WHERE id = ?
+    `;
+    result = await pool.query(sql, [status, id]);
+    return NextResponse.json({ status: 200, data: result });
+
+  } else {
+    sql = `
+    UPDATE item
+    SET ownerId = ?, status = ?
+    WHERE id = ?
+    `;
+    result = await pool.query(sql, [ownerId, status, id]);
+    return NextResponse.json({ status: 200, data: result });
+
+  }
 }

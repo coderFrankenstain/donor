@@ -27,8 +27,7 @@ const AddPage = () => {
   const [loading, setLoading] = useState(false);
   const [imageUrl, setImageUrl] = useState();
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [user, setUser] = useState(null);
-  const router = useRouter();
+  const userData = JSON.parse(sessionStorage.getItem("userData"));
 
   const getDonor = async (userId) => {
     const response = await fetch(`/api/donor?creatorId=${userId}`, {
@@ -45,10 +44,9 @@ const AddPage = () => {
       body: JSON.stringify(donor),
     });
     await response.json();
-    await getDonor(user.id);
+    await getDonor(userData.id);
     setItemName("");
     setItemDesc("");
-
   };
 
   const handleAddressSelected = (address, changeUid) => {
@@ -61,7 +59,7 @@ const AddPage = () => {
     //同时上传后端接口
     fetch("/api/donor", {
       method: "PUT",
-      body: JSON.stringify({ uuid: changeUid, status: 2 }),
+      body: JSON.stringify({ id: changeUid, status: 2 }),
     });
   };
 
@@ -74,15 +72,6 @@ const AddPage = () => {
   };
 
   useEffect(() => {
-    const userData = JSON.parse(localStorage.getItem("userData"));
-    console.log("your id is ", userData);
-
-    if (userData) {
-      setUser(userData);
-    } else {
-      router.push("/login");
-    }
-
     getDonor(userData.id);
   }, []);
 
@@ -143,14 +132,14 @@ const AddPage = () => {
             title="发货地址"
             open={isModalOpen}
             onOk={() => {
-              handleAddressSelected("", record.uuid);
+              handleAddressSelected("", record.id);
               setIsModalOpen(false);
             }}
             onCancel={() => {
               setIsModalOpen(false);
             }}
           >
-            <p>{record.address}</p>
+            <p>上海市 徐汇区 </p>
           </Modal>
         </>
 
@@ -197,7 +186,8 @@ const AddPage = () => {
 
       // 你现在可以使用这个"path"值做任何你想做的事
       console.log(path);
-      setImageUrl("http://18.143.105.18:3001/upload/" + path);
+      // setImageUrl("http://18.143.105.18:3001/upload/" + path);
+      setImageUrl("/upload/" + path);
     }
   };
 
@@ -262,7 +252,7 @@ const AddPage = () => {
               title: itemName,
               status: 0,
               image: imageUrl || "",
-              creatorId: user.id,
+              creatorId: userData.id,
               content: itemDesc,
             });
           }}
