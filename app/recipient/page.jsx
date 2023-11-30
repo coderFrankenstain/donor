@@ -8,7 +8,7 @@ import AddressSelectModal from "@/components/AddressSelect";
 const Page = () => {
   const [data, setData] = useState([]);
   const [itemName, setItemName] = useState("");
-  const user = JSON.parse(sessionStorage.getItem("userData"));
+  const [user, setUser] = useState(null);
 
   const getDonor = async (id) => {
     const response = await fetch(`/api/donor?ownerId=${id}`, {
@@ -39,6 +39,7 @@ const Page = () => {
 
   useEffect(() => {
     // getDonor();
+    setUser(JSON.parse(sessionStorage.getItem("userData")))
 
     console.log("user is", user);
     getDonor(user.id);

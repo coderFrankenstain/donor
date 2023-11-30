@@ -4,7 +4,7 @@ import pool from "../db/db"; // 确保路径正确
 // 模拟一个全局的存储对象
 let donor = { score: 10 };
 let provider = { score: 10 };
-console.log("我去");
+
 export async function GET(request) {
   const name = request.nextUrl.searchParams.get("name");
   let user;
