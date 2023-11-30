@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { Row, Col, Card, Tabs, Layout, Button, Space } from "antd";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 
 const { Header, Content, Footer } = Layout;
 const { TabPane } = Tabs;
@@ -14,7 +15,7 @@ const HomePage = () => {
   useEffect(() => {
     let temp = JSON.parse(sessionStorage.getItem("userData"));
     serUser(temp)
-    
+
     getDonor();
   }, []);
 
@@ -132,7 +133,13 @@ const HomePage = () => {
               router.push(`/detail/${record.id}`);
             }}
           >
-            卡片内容
+            <Image
+            src={record.image}
+            alt={record.title}
+            width={200}
+            height={200}
+            unoptimized={true}
+          />
           </Card>
         </Col>
       ))}

@@ -120,7 +120,7 @@ const AddPage = () => {
 
       // 你现在可以使用这个"path"值做任何你想做的事
       console.log(path);
-      setImageUrl("http://18.143.105.18:3001/upload/" + path);
+      setImageUrl("/upload/" + path);
 
     }
   };

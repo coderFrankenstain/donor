@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { Button, Card, Col, Input, Row, Typography } from "antd";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 
 const { TextArea } = Input;
 const { Title, Paragraph } = Typography;
@@ -63,13 +64,15 @@ const DetailPage = ({ params }) => {
         </Paragraph>
       </Typography>
       <Row gutter={16}>
-        {Array.from({ length: 1 }, (_, index) => (
-          <Col span={6} key={index}>
-            <Card title={`物品照片 ${index + 1}`} bordered={false}>
-              {/* 这里应该放置图片内容 */}
-            </Card>
-          </Col>
-        ))}
+        <Card title={`物品照片 ${index + 1}`} bordered={false}>
+          <Image
+            src={item && item.image}
+            alt={item && item.title}
+            width={200}
+            height={200}
+            unoptimized={true}
+          />
+        </Card>
       </Row>
       <Card title="物品描述" style={{ marginTop: "20px" }}>
         <p>{item && item.content}</p>
