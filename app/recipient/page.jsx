@@ -39,10 +39,11 @@ const Page = () => {
 
   useEffect(() => {
     // getDonor();
-    setUser(JSON.parse(sessionStorage.getItem("userData")))
+    let userData = JSON.parse(sessionStorage.getItem("userData"));
+    setUser(userData);
 
-    console.log("user is", user);
-    getDonor(user.id);
+    console.log("user is", userData);
+    getDonor(userData.id);
   }, []);
 
   const columns = [
