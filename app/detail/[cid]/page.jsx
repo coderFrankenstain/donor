@@ -8,6 +8,7 @@ import {
   Row,
   Typography,
   message,
+  theme,
   Layout,
 } from "antd";
 import { useRouter } from "next/navigation";
@@ -24,6 +25,10 @@ const DetailPage = ({ params }) => {
 
   const [item, setItem] = useState(null);
   const cloudId = params.cid;
+
+  const {
+    token: { colorBgContainer },
+  } = theme.useToken();
 
   const getItem = async (value) => {
     console.log("请求参数 ", value);
