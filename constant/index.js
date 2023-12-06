@@ -5,3 +5,5 @@ export const Role = [
 ];
 
 export const  baseUrl = "http://18.143.105.18:3001/upload/"
+
+export const AppName = "以物易物互换平台"

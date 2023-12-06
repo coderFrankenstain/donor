@@ -1,14 +1,28 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { Upload, Button, Input, message, Space, Table } from "antd";
+import {
+  Upload,
+  Button,
+  Input,
+  message,
+  Space,
+  Table,
+  Layout,
+  theme,
+} from "antd";
 import Image from "next/image";
 import AddressSelectModal from "@/components/AddressSelect";
+import { AppName } from "@/constant";
 // 请求方法
+const { Header, Content, Footer } = Layout;
 
 const Page = () => {
   const [data, setData] = useState([]);
   const [itemName, setItemName] = useState("");
   const [user, setUser] = useState(null);
+  const {
+    token: { colorBgContainer },
+  } = theme.useToken();
 
   const getDonor = async (id) => {
     const response = await fetch(`/api/donor?ownerId=${id}`, {
@@ -156,27 +170,56 @@ const Page = () => {
   ];
 
   return (
-    <div
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        width: "80%",
-      }}
-    >
-      <h1>选择公益品</h1>
-      <Table
+    <Layout style={{ width: "70vw", margin: "auto" }}>
+      <Header
         style={{
+          position: "sticky",
+          top: 0,
+          zIndex: 1,
           width: "100%",
-          height: "600px",
-          marginTop: "30px",
+          display: "flex",
+          alignItems: "center",
         }}
-        columns={columns}
-        dataSource={data}
-        pagination={false}
-        scroll={{ y: 600 }}
-      />
-    </div>
+      >
+        <div className="demo-logo" />
+        <h1 style={{ color: "white" }}> {AppName}</h1>
+      </Header>
+
+      <Content
+        className="site-layout"
+        style={{
+          padding: "20px 50px",
+        }}
+      >
+        <div
+          style={{
+            padding: 24,
+            minHeight: 380,
+            background: colorBgContainer,
+          }}
+        >
+          <h1>选择公益品</h1>
+            <Table
+              style={{
+                width: "100%",
+                height: "500px",
+                marginTop: "30px",
+              }}
+              columns={columns}
+              dataSource={data}
+              pagination={false}
+              scroll={{ y: 400 }}
+            />
+        </div>
+      </Content>
+      <Footer
+        style={{
+          textAlign: "center",
+        }}
+      >
+        {AppName}
+      </Footer>
+    </Layout>
   );
 };
 

@@ -7,7 +7,7 @@ let provider = { score: 10 };
 
 export async function GET(request) {
   const userId = request.nextUrl.searchParams.get("userId");
- 
+
   try {
     const sql = "SELECT * FROM user WHERE id = ? ";
     const [users] = await pool.query(sql, [userId]);
@@ -22,7 +22,6 @@ export async function GET(request) {
     console.error("Insertion error:", error);
     return NextResponse.json({ code: -1 });
   }
-
 }
 
 export async function POST(request) {
@@ -36,4 +35,23 @@ export async function POST(request) {
   const result = await pool.query(sql, [score, creatorId]);
 
   return NextResponse.json({ status: 200, result: result });
+}
+
+export async function UPDATE(request) {
+  console.log("接受到请求");
+  try {
+    const { id, address } = await request.json();
+
+    const sql = `
+    UPDATE user
+    SET  address = ?
+    WHERE id = ?
+    `;
+    const result = await pool.query(sql, [address, id]);
+
+    return NextResponse.json({ status: 200, result: result });
+  } catch (error) {
+    console.error("Insertion error:", error);
+    return NextResponse.json({ code: -1 });
+  }
 }

@@ -1,8 +1,19 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { Button, Input, message, Space, Table, Upload } from "antd";
+import {
+  Button,
+  Input,
+  message,
+  Space,
+  Table,
+  Upload,
+  Layout,
+  theme,
+} from "antd";
 import Image from "next/image";
 import { LoadingOutlined, PlusOutlined } from "@ant-design/icons";
+import { AppName } from "@/constant";
+const { Header, Content, Footer } = Layout;
 
 const beforeUpload = (file) => {
   const isJpgOrPng = file.type === "image/jpeg" || file.type === "image/png";
@@ -25,7 +36,9 @@ const AddPage = () => {
   const [loading, setLoading] = useState(false);
   const [imageUrl, setImageUrl] = useState();
   const [userData, setUserData] = useState(null);
-
+  const {
+    token: { colorBgContainer },
+  } = theme.useToken();
   const getDigital = async (userId) => {
     const response = await fetch(`/api/digital?creator=${userId}`, {
       method: "GET",
@@ -145,7 +158,140 @@ const AddPage = () => {
   };
 
   return (
-    <div
+    <Layout style={{ width: "70vw", margin: "auto" }}>
+      <Header
+        style={{
+          position: "sticky",
+          top: 0,
+          zIndex: 1,
+          width: "100%",
+          display: "flex",
+          alignItems: "center",
+        }}
+      >
+        <div className="demo-logo" />
+        <h1 style={{ color: "white" }}> {AppName}</h1>
+      </Header>
+
+      <Content
+        className="site-layout"
+        style={{
+          padding: "20px 50px",
+        }}
+      >
+        <div
+          style={{
+            padding: 24,
+            minHeight: 380,
+            background: colorBgContainer,
+          }}
+        >
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              width: "80%",
+            }}
+          >
+            <h1>发布数字艺术品</h1>
+            <p>用户当前当前积分 {userData && userData.score}</p>
+
+            <Space style={{ width: "40%" }} direction="vertical" size="large">
+              <Input
+                value={itemName}
+                placeholder="请输入名称"
+                onChange={handleItemNameChange}
+              />
+              <Input
+                value={itemDesc}
+                placeholder="请输入描述"
+                onChange={handleItemDescChange}
+              />
+              <Input
+                value={itemScore}
+                placeholder="请输入点数"
+                onChange={handleItemScoreChange}
+              />
+              <Upload
+                name="file"
+                listType="picture-card"
+                className="avatar-uploader"
+                showUploadList={false}
+                action="/api/upload"
+                beforeUpload={beforeUpload}
+                onChange={handleChange}
+              >
+                {imageUrl ? (
+                  <div
+                    style={{
+                      width: "100%",
+                      height: "100%",
+                      position: "relative",
+                    }}
+                  >
+                    <Image
+                      src={imageUrl}
+                      alt="avatar"
+                      layout="fill"
+                      unoptimized={true}
+                    ></Image>
+                  </div>
+                ) : (
+                  uploadButton
+                )}
+              </Upload>
+              <Button
+                style={{ width: "100%" }}
+                type="primary"
+                onClick={() => {
+                  if (itemName === "") {
+                    message.error("请输入物品名称");
+                    return;
+                  }
+                  addDigital({
+                    title: itemName,
+                    status: 0,
+                    image: imageUrl || "",
+                    creatorId: userData.id,
+                    content: itemDesc,
+                    score: itemScore,
+                  });
+                }}
+              >
+                发布
+              </Button>
+            </Space>
+            </div>
+            <Table
+              style={{
+                width: "100%",
+                height: "500px",
+                marginTop: "30px",
+              }}
+              columns={columns}
+              dataSource={data}
+              pagination={false}
+              scroll={{ y: 400 }}
+            />
+          
+        </div>
+      </Content>
+      <Footer
+        style={{
+          textAlign: "center",
+        }}
+      >
+        {AppName}
+      </Footer>
+    </Layout>
+  );
+};
+
+export default AddPage;
+
+{
+  /* <div
       style={{
         display: "flex",
         flexDirection: "column",
@@ -228,8 +374,5 @@ const AddPage = () => {
         pagination={false}
         scroll={{ y: 600 }}
       />
-    </div>
-  );
-};
-
-export default AddPage;
+    </div> */
+}

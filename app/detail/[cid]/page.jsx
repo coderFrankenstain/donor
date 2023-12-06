@@ -1,8 +1,19 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { Button, Card, Col, Input, Row, Typography, message } from "antd";
+import {
+  Button,
+  Card,
+  Col,
+  Input,
+  Row,
+  Typography,
+  message,
+  Layout,
+} from "antd";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
+import { AppName } from "@/constant";
+const { Header, Content, Footer } = Layout;
 
 const { TextArea } = Input;
 const { Title, Paragraph } = Typography;
@@ -70,44 +81,87 @@ const DetailPage = ({ params }) => {
   };
 
   return (
-    <div style={{ width: "70vw", margin: "auto" }}>
-      <Typography>
-        <Title level={4}>物品详情</Title>
-        <Paragraph>
-          物品名称: {item && item.title} <br />
-          发布人: {item && item.id} 号 <br />
-          积分点数: {item && item.score}
-        </Paragraph>
-      </Typography>
-      <Row gutter={16}>
-        <Card title={`物品照片`} bordered={false}>
-          {item ? (
-            <Image
-              src={item && item.image}
-              alt={item && item.title}
-              width={200}
-              height={200}
-              unoptimized={true}
-            />
-          ) : (
-            <></>
-          )}
-          {/* <Image
+    <Layout style={{ width: "70vw", margin: "auto" }}>
+      <Header
+        style={{
+          position: "sticky",
+          top: 0,
+          zIndex: 1,
+          width: "100%",
+          display: "flex",
+          alignItems: "center",
+        }}
+      >
+        <div className="demo-logo" />
+        <h1 style={{ color: "white" }}>{AppName}</h1>
+      </Header>
+
+  
+      <Content
+        className="site-layout"
+        style={{
+          padding: "20px 50px",
+        }}
+      >
+       <div
+          style={{
+            padding: 24,
+            minHeight: 380,
+            background: colorBgContainer,
+          }}
+        >
+          <Typography>
+            <Title level={4}>物品详情</Title>
+            <Paragraph>
+              物品名称: {item && item.title} <br />
+              发布人: {item && item.id} 号 <br />
+              积分点数: {item && item.score}
+            </Paragraph>
+          </Typography>
+          <Row gutter={16}>
+            <Card title={`物品照片`} bordered={false}>
+              {item ? (
+                <Image
+                  src={item && item.image}
+                  alt={item && item.title}
+                  width={300}
+                  height={300}
+                  unoptimized={true}
+                />
+              ) : (
+                <></>
+              )}
+              {/* <Image
             src={item && item.image}
             alt={item && item.title}
             width={200}
             height={200}
             unoptimized={true}
           /> */}
-        </Card>
-      </Row>
-      <Card title="物品描述" style={{ marginTop: "20px" }}>
-        <p>{item && item.content}</p>
-      </Card>
-      <Button onClick={purchase} type="primary" style={{ marginTop: "20px" }}>
-        我要购买
-      </Button>
-    </div>
+          
+            </Card>
+          </Row>
+          <Card title="物品描述" style={{ marginTop: "20px", width:"50vw"}}>
+            <p>{item && item.content}</p>
+          </Card>
+          <Button
+            onClick={purchase}
+            type="primary"
+            style={{ marginTop: "20px" }}
+          >
+            我要购买
+          </Button>
+        </div>
+      </Content>
+
+      <Footer
+        style={{
+          textAlign: "center",
+        }}
+      >
+        {AppName}
+      </Footer>
+    </Layout>
   );
 };
 

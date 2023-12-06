@@ -1,10 +1,22 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { Upload, Button, Input, message, Space, Table, Modal } from "antd";
+import {
+  Upload,
+  Button,
+  Input,
+  message,
+  Space,
+  Table,
+  Modal,
+  Layout,
+  theme,
+} from "antd";
 import Image from "next/image";
 import { LoadingOutlined, PlusOutlined } from "@ant-design/icons";
 import { baseUrl } from "@/constant";
 import { useRouter } from "next/navigation";
+import { AppName } from "@/constant";
+const { Header, Content, Footer } = Layout;
 
 // 请求方法
 
@@ -27,8 +39,10 @@ const AddPage = () => {
   const [loading, setLoading] = useState(false);
   const [imageUrl, setImageUrl] = useState();
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [userData, setUserData] = useState(null)
-
+  const [userData, setUserData] = useState(null);
+  const {
+    token: { colorBgContainer },
+  } = theme.useToken();
   const getDonor = async (userId) => {
     const response = await fetch(`/api/donor?creatorId=${userId}`, {
       method: "GET",
@@ -72,8 +86,8 @@ const AddPage = () => {
   };
 
   useEffect(() => {
-    let temp = JSON.parse(sessionStorage.getItem("userData"))
-    setUserData(temp)
+    let temp = JSON.parse(sessionStorage.getItem("userData"));
+    setUserData(temp);
 
     getDonor(temp.id);
   }, []);
@@ -195,86 +209,133 @@ const AddPage = () => {
   };
 
   return (
-    <div
-      style={{ display: "flex", flexDirection: "column", alignItems: "center" }}
-    >
-      <h1>发布公益品</h1>
-      <Space style={{ width: "40%" }} direction="vertical" size="large">
-        <Input
-          value={itemName}
-          placeholder="请输入名称"
-          onChange={handleItemNameChange}
-        />
-        <Input
-          value={itemDesc}
-          placeholder="请输入描述"
-          onChange={handleItemDescChange}
-        />
-        <Upload
-          name="file"
-          listType="picture-card"
-          className="avatar-uploader"
-          showUploadList={false}
-          action="/api/upload"
-          beforeUpload={beforeUpload}
-          onChange={handleChange}
-        >
-          {imageUrl ? (
-            <div
-              style={{ width: "100%", height: "100%", position: "relative" }}
-            >
-              <Image
-                src={imageUrl}
-                alt="avatar"
-                layout="fill"
-                unoptimized={true}
-              ></Image>
-            </div>
-          ) : (
-            uploadButton
-          )}
-        </Upload>
-
-        <Button
-          style={{ width: "100%" }}
-          type="primary"
-          onClick={() => {
-            if (itemName === "") {
-              message.error("请输入物品名称");
-              return;
-            }
-            if (itemDesc === "") {
-              message.error("请输入物品描述");
-              return;
-            }
-            if (imageUrl === "") {
-              message.error("请选择图片");
-              return;
-            }
-            addDonor({
-              title: itemName,
-              status: 0,
-              image: imageUrl || "",
-              creatorId: userData.id,
-              content: itemDesc,
-            });
+    <Layout style={{ width: "60vw", margin: "auto" }}>
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+        }}
+      >
+        <Header
+          style={{
+            position: "sticky",
+            top: 0,
+            zIndex: 1,
+            width: "100%",
+            display: "flex",
+            alignItems: "center",
           }}
         >
-          发布
-        </Button>
-      </Space>
-      <Table
+          <div className="demo-logo" />
+          <h1 style={{ color: "white" }}> {AppName}</h1>
+        </Header>
+
+        <Content
+          className="site-layout"
+          style={{
+            padding: "20px 50px",
+          }}
+        >
+          <div
+            style={{
+              padding: 24,
+              minHeight: 380,
+              background: colorBgContainer,
+            }}
+          >
+            <h1>发布公益品</h1>
+            <Space style={{ width: "40%" }} direction="vertical" size="large">
+              <Input
+                value={itemName}
+                placeholder="请输入名称"
+                onChange={handleItemNameChange}
+              />
+              <Input
+                value={itemDesc}
+                placeholder="请输入描述"
+                onChange={handleItemDescChange}
+              />
+              <Upload
+                name="file"
+                listType="picture-card"
+                className="avatar-uploader"
+                showUploadList={false}
+                action="/api/upload"
+                beforeUpload={beforeUpload}
+                onChange={handleChange}
+              >
+                {imageUrl ? (
+                  <div
+                    style={{
+                      width: "100%",
+                      height: "100%",
+                      position: "relative",
+                    }}
+                  >
+                    <Image
+                      src={imageUrl}
+                      alt="avatar"
+                      layout="fill"
+                      unoptimized={true}
+                    ></Image>
+                  </div>
+                ) : (
+                  uploadButton
+                )}
+              </Upload>
+
+              <Button
+                style={{ width: "100%" }}
+                type="primary"
+                onClick={() => {
+                  if (itemName === "") {
+                    message.error("请输入物品名称");
+                    return;
+                  }
+                  if (itemDesc === "") {
+                    message.error("请输入物品描述");
+                    return;
+                  }
+                  if (imageUrl === "") {
+                    message.error("请选择图片");
+                    return;
+                  }
+                  addDonor({
+                    title: itemName,
+                    status: 0,
+                    image: imageUrl || "",
+                    creatorId: userData.id,
+                    content: itemDesc,
+                  });
+                }}
+              >
+                发布
+              </Button>
+            </Space>
+            <Table
+              style={{
+                width: "100%",
+                height: "500px",
+                marginTop: "30px",
+              }}
+              columns={columns}
+              dataSource={data}
+              pagination={false}
+              scroll={{ y: 400 }}
+            />
+          </div>
+        </Content>
+      </div>
+
+      <Footer
         style={{
-          width: "100%",
-          height: "600px",
-          marginTop: "30px",
+          textAlign: "center",
         }}
-        columns={columns}
-        dataSource={data}
-        pagination={false}
-        scroll={{ y: 600 }}
-      />
-    </div>
+      >
+        {AppName}
+      </Footer>
+    </Layout>
   );
 };
 
